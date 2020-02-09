@@ -7,26 +7,20 @@ const inStream = fs.createReadStream('./name_list.txt');
 const outStream = new stream();
 const rl = readline.createInterface(inStream, outStream);
 
-// try {
-// 	const data = fs.readFileSync('name_list.txt', 'utf8');
-// 	console.log('Here is data: ' + data);
-// } catch (err) {
-// 	console.error(err);
-// }
-
 rl.on('line', function(line) {
-	// process line here
-	console.log(line + '2');
+	rl.pause();
+	getPic(line).then(() => {
+		rl.resume();
+	});
 });
 
-const getPic = async function() {
+const getPic = async function(line) {
 	const browser = await puppeteer.launch({ headless: true });
 	const page = await browser.newPage();
 	await page.goto('https://google.ca');
-	await page.setViewport({ width: 1000, height: 500 });
-	await page.screenshot({ path: 'google.png' });
+	await page.focus('#fakebox-input');
+	await page.keyboard.type(`${line}`);
+	await page.screenshot({ path: `./screen/${name}` });
 
 	await browser.close();
 };
-
-getPic();
